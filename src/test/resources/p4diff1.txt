@@ -1,0 +1,5 @@
+==== //holland/users/eric.cintra/StackTDDExample/Stack.Core.Tests/GivenAStack.cpp#1 (text) - //holland/users/eric.cintra/StackTDDExample/Stack.Core.Tests/GivenAStack.cpp#2 (text) ==== content
+57a58
+>       stack.Push(3);
+58a60
+>       ASSERT_EQ(3, stack.Pop());
