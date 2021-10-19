@@ -7,7 +7,6 @@
 package org.cpp.metrics.extractor.infrastructure;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -26,7 +25,7 @@ public class TestProcessWrapperImpl {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
+    // @Test // @TODO: this is Windows-specific.
     public void whenRunningProcessShouldReturnStdOut() throws IOException, InterruptedException {
         var processWrapper = new ProcessWrapperImpl(logger);
         var content = processWrapper.executeProcess("cmd /c dir");
