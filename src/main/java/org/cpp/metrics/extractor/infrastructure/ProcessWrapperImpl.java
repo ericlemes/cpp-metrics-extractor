@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 public class ProcessWrapperImpl implements ProcessWrapper {
 
-    private Logger logger;
+    private final Logger logger;
 
-    public ProcessWrapperImpl(Logger logger){
+    public ProcessWrapperImpl(Logger logger) {
         this.logger = logger;
     }
 
@@ -24,14 +24,14 @@ public class ProcessWrapperImpl implements ProcessWrapper {
         logger.logMessage("Executing command: " + commandLine);
 
         var result = new ArrayList<String>();
-        Process process = Runtime.getRuntime().exec(commandLine); 
+        Process process = Runtime.getRuntime().exec(commandLine);
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null) {
             result.add(line);
         }
-     
+
         reader.close();
         process.waitFor();
         if (process.exitValue() != 0)
@@ -39,5 +39,5 @@ public class ProcessWrapperImpl implements ProcessWrapper {
 
         return result;
     }
-    
+
 }

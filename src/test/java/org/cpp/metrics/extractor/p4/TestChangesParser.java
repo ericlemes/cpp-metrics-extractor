@@ -6,22 +6,22 @@
 
 package org.cpp.metrics.extractor.p4;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
 import org.cpp.metrics.extractor.infrastructure.FileStreamFactoryImpl;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestChangesParser {
     private ChangesParser changesParser;
 
     @Before
-    public void SetUp(){
-      changesParser = new ChangesParser();
+    public void SetUp() {
+        changesParser = new ChangesParser();
     }
-  
+
     @Test
     public void whenParsingChangesWithValidFileShouldReturnChangesetNumbers() throws IOException {
         var stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ChangesFiles1.txt");

@@ -6,26 +6,26 @@
 
 package org.cpp.metrics.extractor.codechurn;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-
 import org.cpp.metrics.extractor.p4.LineRange;
 import org.cpp.metrics.extractor.sonarqube.FunctionData;
 import org.cpp.metrics.extractor.sonarqube.FunctionLevelData;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+
 public class TestCodeChurnPerFunctionProcessor {
     private CodeChurnPerFunctionProcessor codeChurnProcessor;
 
     @Before
-    public void SetUp(){
+    public void SetUp() {
         codeChurnProcessor = new CodeChurnPerFunctionProcessor();
     }
 
     @Test
-    public void whenProcessingSingleFileShouldComputeNumberOfChangesPerFunction(){
+    public void whenProcessingSingleFileShouldComputeNumberOfChangesPerFunction() {
         var linesChanged = new ArrayList<LineRange>();
         linesChanged.add(new LineRange(57, 57));
         linesChanged.add(new LineRange(58, 58));
@@ -46,13 +46,13 @@ public class TestCodeChurnPerFunctionProcessor {
         codeChurnProcessor.process(linesChanged, functionLevelData);
 
         assertEquals(codeChurnProcessor.output.get(f1.functionName).intValue(), 0);
-        assertEquals(codeChurnProcessor.output.get(f2.functionName).intValue(), 1);        
+        assertEquals(codeChurnProcessor.output.get(f2.functionName).intValue(), 1);
     }
 
     @Test
-    public void whenProcessingSingleFileWithRange1ShouldComputeNumberOfChangesPerFunction(){
+    public void whenProcessingSingleFileWithRange1ShouldComputeNumberOfChangesPerFunction() {
         var linesChanged = new ArrayList<LineRange>();
-        linesChanged.add(new LineRange(40, 57));        
+        linesChanged.add(new LineRange(40, 57));
 
         var functionLevelData = new FunctionLevelData();
         var f1 = new FunctionData();
@@ -70,13 +70,13 @@ public class TestCodeChurnPerFunctionProcessor {
         codeChurnProcessor.process(linesChanged, functionLevelData);
 
         assertEquals(codeChurnProcessor.output.get(f1.functionName).intValue(), 1);
-        assertEquals(codeChurnProcessor.output.get(f2.functionName).intValue(), 1);        
-    }    
+        assertEquals(codeChurnProcessor.output.get(f2.functionName).intValue(), 1);
+    }
 
     @Test
-    public void whenProcessingSingleFileWithRange2ShouldComputeNumberOfChangesPerFunction(){
+    public void whenProcessingSingleFileWithRange2ShouldComputeNumberOfChangesPerFunction() {
         var linesChanged = new ArrayList<LineRange>();
-        linesChanged.add(new LineRange(40, 57));        
+        linesChanged.add(new LineRange(40, 57));
 
         var functionLevelData = new FunctionLevelData();
         var f1 = new FunctionData();
@@ -88,12 +88,12 @@ public class TestCodeChurnPerFunctionProcessor {
         codeChurnProcessor.process(linesChanged, functionLevelData);
 
         assertEquals(codeChurnProcessor.output.get(f1.functionName).intValue(), 1);
-    }        
+    }
 
     @Test
-    public void whenProcessingSingleFileWithRange3ShouldComputeNumberOfChangesPerFunction(){
+    public void whenProcessingSingleFileWithRange3ShouldComputeNumberOfChangesPerFunction() {
         var linesChanged = new ArrayList<LineRange>();
-        linesChanged.add(new LineRange(40, 57));        
+        linesChanged.add(new LineRange(40, 57));
 
         var functionLevelData = new FunctionLevelData();
         var f1 = new FunctionData();
@@ -105,12 +105,12 @@ public class TestCodeChurnPerFunctionProcessor {
         codeChurnProcessor.process(linesChanged, functionLevelData);
 
         assertEquals(codeChurnProcessor.output.get(f1.functionName).intValue(), 1);
-    }            
+    }
 
     @Test
-    public void whenProcessingSingleFileWithRange4ShouldComputeNumberOfChangesPerFunction(){
+    public void whenProcessingSingleFileWithRange4ShouldComputeNumberOfChangesPerFunction() {
         var linesChanged = new ArrayList<LineRange>();
-        linesChanged.add(new LineRange(40, 42));        
+        linesChanged.add(new LineRange(40, 42));
 
         var functionLevelData = new FunctionLevelData();
         var f1 = new FunctionData();
@@ -122,12 +122,12 @@ public class TestCodeChurnPerFunctionProcessor {
         codeChurnProcessor.process(linesChanged, functionLevelData);
 
         assertEquals(codeChurnProcessor.output.get(f1.functionName).intValue(), 1);
-    }   
-    
+    }
+
     @Test
-    public void whenProcessingSingleFileWithNoOverlapShouldComputeNumberOfChangesPerFunction(){
+    public void whenProcessingSingleFileWithNoOverlapShouldComputeNumberOfChangesPerFunction() {
         var linesChanged = new ArrayList<LineRange>();
-        linesChanged.add(new LineRange(40, 57));        
+        linesChanged.add(new LineRange(40, 57));
 
         var functionLevelData = new FunctionLevelData();
         var f1 = new FunctionData();
@@ -139,10 +139,10 @@ public class TestCodeChurnPerFunctionProcessor {
         codeChurnProcessor.process(linesChanged, functionLevelData);
 
         assertEquals(codeChurnProcessor.output.get(f1.functionName).intValue(), 0);
-    }            
+    }
 
     @Test
-    public void whenExportingThenShouldGenerateOutputOnExpectedFormat(){
+    public void whenExportingThenShouldGenerateOutputOnExpectedFormat() {
         codeChurnProcessor.output.put("func2", 10);
         codeChurnProcessor.output.put("func1", 1);
 

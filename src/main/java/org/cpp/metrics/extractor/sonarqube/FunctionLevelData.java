@@ -12,7 +12,7 @@ import java.util.List;
 public class FunctionLevelData {
     public final List<FunctionData> functions;
 
-    public FunctionLevelData(){
+    public FunctionLevelData() {
         this.functions = new ArrayList<FunctionData>();
     }
 }

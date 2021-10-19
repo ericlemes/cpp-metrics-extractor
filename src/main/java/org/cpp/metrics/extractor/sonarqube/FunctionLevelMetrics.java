@@ -6,37 +6,37 @@
 
 package org.cpp.metrics.extractor.sonarqube;
 
-import javax.annotation.CheckForNull;
-
 import org.sonar.cxx.squidbridge.measures.CalculatedMetricFormula;
 import org.sonar.cxx.squidbridge.measures.MetricDef;
+
+import javax.annotation.CheckForNull;
 
 public enum FunctionLevelMetrics implements MetricDef {
     FUNCTION_LEVEL_METRICS;
 
     @Override
     public String getName() {
-      return name();
+        return name();
     }
-  
+
     @Override
     public boolean isCalculatedMetric() {
-      return false;
+        return false;
     }
-  
+
     @Override
     public boolean aggregateIfThereIsAlreadyAValue() {
-      return true;
+        return true;
     }
-  
+
     @Override
     public boolean isThereAggregationFormula() {
-      return true;
+        return true;
     }
-  
+
     @Override
     @CheckForNull
     public CalculatedMetricFormula getCalculatedMetricFormula() {
-      return null;
+        return null;
     }
 }
