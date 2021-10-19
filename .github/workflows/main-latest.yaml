@@ -1,0 +1,47 @@
+name: main-latest
+
+on:
+  push:
+    branches: [ 'main' ] # Run on pushes to main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout sonar-cxx repo
+        uses: actions/checkout@v2
+        with:
+          repository: "SonarOpenCommunity/sonar-cxx"
+          ref: "cxx-2.0.5" # This is the tag that produces org.sonarsource.sonarqube-plugins.cxx:cxx-sslr-toolkit:2.0.5-SNAPSHOT
+          path: "sonar-cxx"
+
+      - name: Checkout this repo
+        uses: actions/checkout@v2
+        with:
+          path: cpp-metrics-extractor
+
+      - name: Set up JDK 11 Adopt
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt' # adopt 11 is prebaked in GitHub Action's runners. Update to Eclipse Adoptium when that's there.
+          cache: 'maven' # This will actions/cache .mvn for you, but requires **/pom.xml to exist; that's why we clone the repos first
+
+      - name: Build sonar-cxx dependency from source with Maven # (for lack of a public repo hosting those artifacts)
+        working-directory: "sonar-cxx"
+        run: mvn --batch-mode -DskipTests=true install # Don't run tests, we don't own it...
+
+      - name: Build cpp-metrics-extractor with Maven
+        working-directory: "cpp-metrics-extractor"
+        run: mvn --batch-mode package assembly:assembly
+
+      # Release the fat JAR to GH Releases
+      - uses: "marvinpinto/action-automatic-releases@latest" # A quick and dirty way to publish releases, using a moving tag
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}" # The default token, no need to create any secrets.
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Latest release, fat JAR"
+          files: |
+            cpp-metrics-extractor/target/cpp-metrics-extractor-*-jar-with-dependencies.jar
