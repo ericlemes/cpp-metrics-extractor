@@ -6,14 +6,6 @@
 
 package org.cpp.metrics.extractor.p4;
 
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.cpp.metrics.extractor.codechurn.CodeChurnPerFunctionProcessor;
 import org.cpp.metrics.extractor.infrastructure.FileStreamFactory;
 import org.cpp.metrics.extractor.infrastructure.ProcessWrapper;
@@ -25,11 +17,16 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import static org.mockito.Mockito.*;
+
 public class TestP4CodeChurnExtractorImpl {
     @Mock
     private ProcessWrapper processWrapper;
 
-    @Mock 
+    @Mock
     private ChangesParser changesParser;
 
     @Mock
@@ -43,13 +40,13 @@ public class TestP4CodeChurnExtractorImpl {
     private ArrayList<String> fileRev2;
     private ArrayList<String> fileRev1;
 
-    @Mock 
+    @Mock
     private FileStreamFactory fileStreamFactory;
 
-    @Mock 
+    @Mock
     private P4DiffParser diffParser;
 
-    @Mock 
+    @Mock
     private CodeChurnPerFunctionProcessor codeChurnProcessor;
 
     private FunctionLevelData rev1Data;
@@ -72,7 +69,7 @@ public class TestP4CodeChurnExtractorImpl {
 
         changesInputStream = new ArrayList<String>();
         when(processWrapper.executeProcess("changesCommand")).thenReturn(changesInputStream);
-                
+
         ArrayList<Integer> changesets = new ArrayList<Integer>();
         changesets.add(3);
         changesets.add(2);
@@ -111,25 +108,25 @@ public class TestP4CodeChurnExtractorImpl {
 
     @Test
     public void whenExtractingChurnThenShouldInvokeP4Command() throws IOException, InterruptedException {
-        churnExtractor.extractCodeChurn("p4 changes -s submitted %s@%s,%s", "printCommand", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate", 
-            "outputFile", "tempDir", "filePrefix", forceIncludes);
+        churnExtractor.extractCodeChurn("p4 changes -s submitted %s@%s,%s", "printCommand", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate",
+                "outputFile", "tempDir", "filePrefix", forceIncludes);
 
         verify(processWrapper).executeProcess("p4 changes -s submitted repositoryPath@startDate,endDate");
     }
 
     @Test
     public void whenExtractingChurnThenShouldParseChanges() throws IOException, InterruptedException {
-        churnExtractor.extractCodeChurn("changesCommand", "printCommand", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate", 
-            "outputFile", "tempDir", "filePrefix", forceIncludes);
+        churnExtractor.extractCodeChurn("changesCommand", "printCommand", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate",
+                "outputFile", "tempDir", "filePrefix", forceIncludes);
 
         verify(changesParser, times(1)).parse(changesInputStream);
     }
 
     @Test
     public void whenExtractingChurnShouldGetFileContents() throws IOException, InterruptedException {
-        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate", 
-        "outputFile", "tempDir", "filePrefix", forceIncludes);
-        
+        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate",
+                "outputFile", "tempDir", "filePrefix", forceIncludes);
+
         verify(processWrapper, times(1)).executeProcess("p4 print repositoryPath@3");
         verify(processWrapper, times(1)).executeProcess("p4 print repositoryPath@2");
         verify(processWrapper, times(1)).executeProcess("p4 print repositoryPath@1");
@@ -137,55 +134,55 @@ public class TestP4CodeChurnExtractorImpl {
 
     @Test
     public void whenExtractingChurnShouldSaveFilesInTempDir() throws IOException, InterruptedException {
-        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate", 
-        "outputFile", "tempDir", "filePrefix", forceIncludes);
-        
+        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate",
+                "outputFile", "tempDir", "filePrefix", forceIncludes);
+
         verify(fileStreamFactory, times(1)).writeLinesToFile(fileRev1, "tempDir/filePrefix1");
         verify(fileStreamFactory, times(1)).writeLinesToFile(fileRev2, "tempDir/filePrefix2");
-        verify(fileStreamFactory, times(1)).writeLinesToFile(fileRev3, "tempDir/filePrefix3");        
+        verify(fileStreamFactory, times(1)).writeLinesToFile(fileRev3, "tempDir/filePrefix3");
     }
 
-    @Test 
+    @Test
     public void whenExtractingChurnShouldGetMetricsForEachFileRevision() throws IOException, InterruptedException {
-        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate", 
-        "outputFile", "tempDir", "filePrefix", forceIncludes);
-        
-        verify(metricsExtractor, times(1)).computeMetrics("tempDir/filePrefix1", forceIncludes); 
-        verify(metricsExtractor, times(1)).computeMetrics("tempDir/filePrefix2", forceIncludes);         
+        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate",
+                "outputFile", "tempDir", "filePrefix", forceIncludes);
+
+        verify(metricsExtractor, times(1)).computeMetrics("tempDir/filePrefix1", forceIncludes);
+        verify(metricsExtractor, times(1)).computeMetrics("tempDir/filePrefix2", forceIncludes);
     }
 
     @Test
     public void whenExtractingChurnShouldGetDiffsForEachFileRevision() throws IOException, InterruptedException {
-        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate", 
-        "outputFile", "tempDir", "filePrefix", forceIncludes);
+        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate",
+                "outputFile", "tempDir", "filePrefix", forceIncludes);
 
         verify(processWrapper, times(1)).executeProcess("p4 diff2 repositoryPath@2 repositoryPath@3");
-        verify(processWrapper, times(1)).executeProcess("p4 diff2 repositoryPath@1 repositoryPath@2");        
+        verify(processWrapper, times(1)).executeProcess("p4 diff2 repositoryPath@1 repositoryPath@2");
     }
 
     @Test
     public void whenExtractingChurnShouldParseDiffs() throws IOException, InterruptedException {
-        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate", 
-        "outputFile", "tempDir", "filePrefix", forceIncludes);
-        
+        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate",
+                "outputFile", "tempDir", "filePrefix", forceIncludes);
+
         verify(diffParser, times(1)).parse(diff1to2Output);
-        verify(diffParser, times(1)).parse(diff2to3Output);        
+        verify(diffParser, times(1)).parse(diff2to3Output);
     }
 
     @Test
     public void whenExtractingChurnShouldComputeChurnForEachDiff() throws IOException, InterruptedException {
-        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate", 
-        "outputFile", "tempDir", "filePrefix", forceIncludes);
+        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate",
+                "outputFile", "tempDir", "filePrefix", forceIncludes);
 
         InOrder inOrder = inOrder(codeChurnProcessor);
         inOrder.verify(codeChurnProcessor, times(1)).process(diff1to2Lines, rev1Data);
-        inOrder.verify(codeChurnProcessor, times(1)).process(diff2to3Lines, rev2Data);        
+        inOrder.verify(codeChurnProcessor, times(1)).process(diff2to3Lines, rev2Data);
     }
 
     @Test
     public void whenExtractingChurnShouldSaveJsonInOutputFile() throws IOException, InterruptedException {
-        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate", 
-        "outputFile", "tempDir", "filePrefix", forceIncludes);
+        churnExtractor.extractCodeChurn("changesCommand", "p4 print %s@%d", "p4 diff2 %s@%d %s@%d", "repositoryPath", "startDate", "endDate",
+                "outputFile", "tempDir", "filePrefix", forceIncludes);
 
         verify(fileStreamFactory, times(1)).writeStringToFile("outputFile", "someJson");
     }

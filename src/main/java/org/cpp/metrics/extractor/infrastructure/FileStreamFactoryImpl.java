@@ -6,16 +6,7 @@
 
 package org.cpp.metrics.extractor.infrastructure;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
@@ -23,17 +14,28 @@ import java.util.ArrayList;
 
 public class FileStreamFactoryImpl implements FileStreamFactory {
 
+    public static ArrayList<String> streamToLines(InputStream stream) throws IOException {
+        var result = new ArrayList<String>();
+        var reader = new BufferedReader(
+                new InputStreamReader(stream));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            result.add(line);
+        }
+        return result;
+    }
+
     @Override
     public InputStream createFileInputStream(File inputFile) throws FileNotFoundException {
-        return new FileInputStream(inputFile);        
+        return new FileInputStream(inputFile);
     }
 
     @Override
     public void writeStreamToFile(InputStream inputStream, String outputFile) throws IOException {
         java.nio.file.Files.copy(
-            inputStream, 
-            new File(outputFile).toPath(),
-            StandardCopyOption.REPLACE_EXISTING);
+                inputStream,
+                new File(outputFile).toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
     }
 
     @Override
@@ -44,24 +46,12 @@ public class FileStreamFactoryImpl implements FileStreamFactory {
     @Override
     public void writeLinesToFile(ArrayList<String> lines, String fileName) throws IOException {
         File outputFile = new File(fileName);
-         
+
         var writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)));
-        for(String line : lines)
-        {
+        for (String line : lines) {
             writer.write(line);
             writer.newLine();
         }
         writer.close();
     }
-
-    public static ArrayList<String> streamToLines(InputStream stream) throws IOException{
-        var result = new ArrayList<String>();      
-        var reader = new BufferedReader(
-                new InputStreamReader(stream));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            result.add(line);
-        }
-        return result;
-      }
 }

@@ -14,7 +14,10 @@ import java.util.ArrayList;
 
 public interface FileStreamFactory {
     InputStream createFileInputStream(File inputFile) throws FileNotFoundException;
+
     void writeStreamToFile(InputStream inputStream, String outputFile) throws IOException;
+
     void writeStringToFile(String fileName, String content) throws IOException;
+
     void writeLinesToFile(ArrayList<String> lines, String fileName) throws IOException;
 }

@@ -10,21 +10,20 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.Token;
 
 public class FileRange {
+    private static final String NEWLINE_REGEX = "(\r)?\n|\r";
     public int startLine;
     public int startColumn;
     public int endLine;
     public int endColumn;
 
-    public FileRange(){
+    public FileRange() {
         this.startLine = -1;
         this.startColumn = -1;
         this.endLine = -1;
         this.endColumn = -1;
     }
 
-    private static final String NEWLINE_REGEX = "(\r)?\n|\r";
-
-    public FileRange(AstNode node){
+    public FileRange(AstNode node) {
         Token startToken = node.getToken();
         Token endToken = node.getLastToken();
         String[] tokenLines = endToken.getOriginalValue().split(NEWLINE_REGEX, -1);
@@ -36,5 +35,5 @@ public class FileRange {
         this.endLine = tokenLastLine;
         this.endColumn = tokenLastLineColumn;
     }
-    
+
 }

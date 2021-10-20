@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class P4DiffParser {
-    public ArrayList<LineRange> parse(ArrayList<String> lines) throws IOException {        
+    public ArrayList<LineRange> parse(ArrayList<String> lines) throws IOException {
         var l = new ArrayList<LineRange>();
 
-        for(String line : lines)    
-        {
+        for (String line : lines) {
             parseLine(l, line);
         }
 
@@ -23,19 +22,19 @@ public class P4DiffParser {
     }
 
     private void parseLine(ArrayList<LineRange> l, String line) {
-        if ((line == null) || (line.trim().equals("")) || (line.substring(0, 1).equals(">")) || (line.substring(0, 1).equals("<"))
-            || (line.substring(0, 3).equals("---")) || (line.substring(0, 4).equals("====")))
+        if ((line == null) || (line.trim().equals("")) || (line.charAt(0) == '>') || (line.charAt(0) == '<')
+                || (line.startsWith("---")) || (line.startsWith("====")))
             return;
         var patternForSingleLine = Pattern.compile("^(\\d+)[a-z]\\d+");
         var matcher = patternForSingleLine.matcher(line);
 
         if (matcher.matches())
-            l.add(new LineRange(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(1))));                    
+            l.add(new LineRange(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(1))));
 
         var patternForLineRange = Pattern.compile("^(\\d+),(\\d+)[a-z]\\d+");
         matcher = patternForLineRange.matcher(line);
         if (matcher.matches())
-            l.add(new LineRange(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2))));                    
-                        
+            l.add(new LineRange(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2))));
+
     }
 }

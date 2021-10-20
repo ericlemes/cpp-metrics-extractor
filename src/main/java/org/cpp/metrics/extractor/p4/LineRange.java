@@ -10,8 +10,8 @@ public class LineRange {
     public int startLine;
     public int endLine;
 
-    public LineRange(int startLine, int endLine){
+    public LineRange(int startLine, int endLine) {
         this.startLine = startLine;
         this.endLine = endLine;
-    }    
+    }
 }

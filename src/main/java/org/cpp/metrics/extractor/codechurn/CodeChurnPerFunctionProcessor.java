@@ -6,16 +6,16 @@
 
 package org.cpp.metrics.extractor.codechurn;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.TreeMap;
-
 import org.cpp.metrics.extractor.p4.LineRange;
 import org.cpp.metrics.extractor.sonarqube.FunctionData;
 import org.cpp.metrics.extractor.sonarqube.FunctionLevelData;
 import org.sonar.api.internal.google.gson.JsonArray;
 import org.sonar.api.internal.google.gson.JsonObject;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Hashtable;
+import java.util.TreeMap;
 
 public class CodeChurnPerFunctionProcessor {
 
@@ -36,8 +36,8 @@ public class CodeChurnPerFunctionProcessor {
                     output.put(functionData.functionName, 0);
 
                 if (((functionData.startLine >= lineChanged.startLine) && (functionData.startLine <= lineChanged.endLine)) ||
-                    ((functionData.endLine >= lineChanged.startLine) && (functionData.endLine <= lineChanged.endLine)) ||
-                    ((lineChanged.startLine >=  functionData.startLine) && (lineChanged.endLine <= functionData.endLine))){
+                        ((functionData.endLine >= lineChanged.startLine) && (functionData.endLine <= lineChanged.endLine)) ||
+                        ((lineChanged.startLine >= functionData.startLine) && (lineChanged.endLine <= functionData.endLine))) {
                     output.put(functionData.functionName, output.get(functionData.functionName) + 1);
                     processed.put(functionData, true);
                 }
@@ -48,8 +48,7 @@ public class CodeChurnPerFunctionProcessor {
     private TreeMap<String, Integer> getOutputSortedByValueDescending() {
         var sortedMap = new TreeMap<String, Integer>(new Comparator<String>() {
             @Override
-            public int compare(String s1, String s2)
-            {
+            public int compare(String s1, String s2) {
                 var valueCompare = output.get(s1).compareTo(output.get(s2));
                 if (valueCompare == 0)
                     return s1.compareTo(s2);
@@ -64,20 +63,20 @@ public class CodeChurnPerFunctionProcessor {
         return sortedMap;
     }
 
-    public String getResultsInJson() {        
+    public String getResultsInJson() {
         var sortedMap = getOutputSortedByValueDescending();
 
         var jsonFunctions = new JsonArray();
-        for (String key : sortedMap.keySet()){
+        for (String key : sortedMap.keySet()) {
             var jsonFunction = new JsonObject();
             jsonFunction.addProperty("functionName", key);
-            jsonFunction.addProperty("numberOfChanges", sortedMap.get(key));            
+            jsonFunction.addProperty("numberOfChanges", sortedMap.get(key));
             jsonFunctions.add(jsonFunction);
         }
-    
+
         var jsonMasterNode = new JsonObject();
         jsonMasterNode.add("data", jsonFunctions);
-        
+
         return jsonMasterNode.toString();
     }
 }

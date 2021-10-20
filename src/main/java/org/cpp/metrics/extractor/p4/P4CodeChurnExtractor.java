@@ -10,6 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public interface P4CodeChurnExtractor {
-    void extractCodeChurn(String changesCommand, String printCommand, String diffCommand, String repositoryPath, String startDate, 
-        String endDate, String outputFile, String tempDir, String tempFilePrefix, ArrayList<String> forceIncludes) throws IOException, InterruptedException;    
+    void extractCodeChurn(String changesCommand, String printCommand, String diffCommand, String repositoryPath, String startDate,
+                          String endDate, String outputFile, String tempDir, String tempFilePrefix, ArrayList<String> forceIncludes) throws IOException, InterruptedException;
 }

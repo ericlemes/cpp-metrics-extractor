@@ -9,12 +9,11 @@ package org.cpp.metrics.extractor.sonarqube;
 public class FunctionData {
     public String functionName;
     public int startLine;
-    public int endLine;    
+    public int endLine;
 
-    public FunctionData()
-    {
+    public FunctionData() {
         this.functionName = "";
         this.startLine = -1;
-        this.endLine = -1;        
+        this.endLine = -1;
     }
 }
